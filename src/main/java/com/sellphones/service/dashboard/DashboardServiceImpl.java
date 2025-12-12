@@ -99,10 +99,10 @@ public class DashboardServiceImpl implements DashboardService{
             throw new AppException(ErrorCode.MOST_SELLING_VARIANT_NOT_FOUND);
         }
 
-        ProductVariant variant = variants.getFirst();
+        ProductVariant variant = variants.get(0);
         variant.setVariantImage(ImageNameToImageUrlConverter.convert(variant.getVariantImage(), productVariantImageFolder));
 
-        return modelMapper.map(variants.getFirst(), AdminProductVariantResponse.class);
+        return modelMapper.map(variants.get(0), AdminProductVariantResponse.class);
     }
 
     @Override
