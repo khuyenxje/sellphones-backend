@@ -1,0 +1,42 @@
+package com.sellphones.repository.product;
+
+import com.sellphones.entity.cart.CartItem;
+import com.sellphones.entity.product.ProductStatus;
+import com.sellphones.entity.product.ProductVariant;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
+
+import java.util.Collection;
+import java.util.List;
+import java.util.Optional;
+
+public interface ProductVariantRepository extends JpaRepository<ProductVariant, Long>, JpaSpecificationExecutor<ProductVariant> {
+    List<ProductVariant> findTop5ByOrderByStockDesc();
+    boolean existsByIdAndStatus(Long id, ProductStatus status);
+    Optional<ProductVariant> findByIdAndStatus(Long id, ProductStatus status);
+
+    @Modifying
+    @Query("UPDATE ProductVariant pv SET pv.stock = pv.stock - :qty WHERE pv.id = :id AND pv.stock >= :qty")
+    int deductStock(@Param("id") Long id, @Param("qty") Long qty);
+
+    @Modifying
+    @Query("""
+        UPDATE ProductVariant pv
+        SET pv.stock = pv.stock + :delta
+        WHERE pv.id = :variantId
+          AND pv.stock + :delta >= 0
+    """)
+    int safeIncreaseStock(@Param("variantId") Long variantId, @Param("delta") long delta);
+
+    @Query("""
+        SELECT pv FROM ProductVariant pv
+        WHERE pv.status = :status
+          AND pv.id IN :variantIds
+    """)
+    List<ProductVariant> findVariantsIn(@Param("status") ProductStatus status,@Param("variantIds") Collection<Long> variantIds);
+
+
+}

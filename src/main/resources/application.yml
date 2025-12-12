@@ -1,0 +1,46 @@
+spring:
+  jwt:
+    secret: "jxgEQeXHuPq8VdbyYFNkANdudQ53YUn4"
+    access-expiration: 900000                        # 15p
+    refresh-expiration: 1209600000             # 14 ngày
+  redis:
+    host: "localhost"
+    port: 6379
+  mail:
+    host: "smtp.gmail.com"
+    port: 587
+    username: ""
+    password: ""
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  payment:
+    vnpay:
+      hashSecret: ""
+      url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
+      command : "pay"
+      currCode : "VND"
+      locale : "vn"
+      orderInfo : "Thanh toan don hang"
+      orderType : 110000
+      returnUrl : "http://localhost:8080/api/v1/payment/vnpay-callback"
+      tmnCode : ""
+      version : "2.1.0"
+      successRedirectUrl : "http://localhost:3000/payment/vnpay/success"
+      failRedirectUrl : "http://localhost:3000/payment/vnpay/fail"
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: ""
+            clientSecret: ""
+            scope:
+              - email
+              - profile
+#              - https://www.googleapis.com/auth/user.gender.read
+#              - https://www.googleapis.com/auth/user.birthday.read
+#              - https://www.googleapis.com/auth/user.phonenumbers.read

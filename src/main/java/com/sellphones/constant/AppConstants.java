@@ -1,0 +1,69 @@
+package com.sellphones.constant;
+
+public class AppConstants {
+
+    public final static String[] PUBLIC_ENDPOINTS = {
+            "/api/v1/test/**",
+            "/api/v1/products/**",
+            "/api/v1/categories/**",
+            "/api/v1/promotion-banners/**",
+            "/api/v1/comments",
+            "/api/v1/comments/child-comments",
+            "/api/v1/brands/**",
+            "/api/v1/reviews",
+            "/api/v1/reviews/product-variants/**",
+            "/api/v1/admin/auth/login",
+            "/api/v1/auth/login",
+            "/api/v1/auth/admin-login",
+            "/api/v1/auth/refresh",
+            "/api/v1/admin/auth/refresh",
+            "/api/v1/auth/logout",
+            "/h2-console/**",
+            "/uploads/**",
+            "/api/v1/users/register",
+            "/api/v1/users/send-register-otp",
+            "/api/v1/users/verify-register-otp",
+            "/api/v1/users/test-create-user",
+            "/api/v1/users/send-forgot-password-otp",
+            "/api/v1/users/verify-forgot-password-otp",
+            "/api/v1/users/reset-password",
+            "/api/v1/users/register-with-google",
+            "/api/v1/payment/vnpay-callback",
+            "/oauth2/**",
+            "/login/**",
+            "/api/v1/payment/vnpay-callback"
+    };
+
+//    public final static String[] CUSTOMER_ENDPOINTS = {
+//            "/api/v1/test/users/**",
+//    };
+
+    public final static String[] ADMIN_ENDPOINTS = {
+            "/api/v1/admin/**",
+    };
+
+    public final static String BASE_URL = "http://localhost:8080/";
+
+    public final static String ADMIN_REFRESH_TOKEN_NAME = "adminRefreshToken";
+
+    public final static String USER_REFRESH_TOKEN_NAME = "refreshToken";
+
+    public static String JWT_HEADER = "Authorization";
+
+    public final static String PRODUCT_VARIANT_IMAGE_FOLDER = "product_variant_images";
+
+    public final static String GIFT_PRODUCT_IMAGE_FOLDER = "gift_products";
+
+    public final static String BRAND_IMAGE_FOLDER = "brand_icons";
+
+    public final static String CATEGORY_IMAGE_FOLDER = "category_icons";
+
+    public final static String PRODUCT_THUMBNAIL_FOLDER = "product_thumbnails";
+
+    public final static String PRODUCT_IMAGE_FOLDER = "product_images";
+
+    public final static String REVIEW_IMAGE_FOLDER = "reviews";
+
+    public final static String PROMOTION_BANNER_FOLDER = "promotion_banners";
+
+}

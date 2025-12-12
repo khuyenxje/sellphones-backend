@@ -1,0 +1,39 @@
+package com.sellphones.entity.product;
+
+import com.sellphones.entity.BaseEntity;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@EqualsAndHashCode(callSuper = true)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@SuperBuilder
+@Table(name = "brand")
+public class Brand extends BaseEntity<Long> {
+
+    @ManyToMany
+    @JoinTable(
+            name = "brand_category",
+            joinColumns = @JoinColumn(name = "brand_id"),
+            inverseJoinColumns = @JoinColumn(name = "category_id")
+    )
+    private List<Category> categories = new ArrayList<>();
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(name = "brand_icon")
+    private String brandIcon;
+
+
+}

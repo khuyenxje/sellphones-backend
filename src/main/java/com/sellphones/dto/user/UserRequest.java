@@ -1,0 +1,23 @@
+package com.sellphones.dto.user;
+
+import jakarta.validation.constraints.NotBlank;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserRequest {
+
+    @NotBlank
+    private String email;
+
+    @NotBlank
+    private String password;
+
+    public UserRequest(String email){
+        this.email = email;
+    }
+
+}

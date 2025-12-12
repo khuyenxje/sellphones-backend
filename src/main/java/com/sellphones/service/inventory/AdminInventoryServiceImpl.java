@@ -1,0 +1,156 @@
+package com.sellphones.service.inventory;
+
+import com.sellphones.dto.PageResponse;
+import com.sellphones.dto.inventory.admin.AdminInventory_FilterRequest;
+import com.sellphones.dto.inventory.admin.AdminInventoryRequest;
+import com.sellphones.dto.inventory.admin.AdminInventoryResponse;
+import com.sellphones.entity.inventory.Inventory;
+import com.sellphones.entity.inventory.Warehouse;
+import com.sellphones.entity.product.ProductVariant;
+import com.sellphones.exception.AppException;
+import com.sellphones.exception.ErrorCode;
+import com.sellphones.repository.inventory.InventoryRepository;
+import com.sellphones.repository.product.ProductVariantRepository;
+import com.sellphones.repository.warehouse.WarehouseRepository;
+import com.sellphones.specification.admin.AdminInventorySpecificationBuilder;
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Service;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class AdminInventoryServiceImpl implements AdminInventoryService{
+
+    private final InventoryRepository inventoryRepository;
+
+    private final ProductVariantRepository productVariantRepository;
+
+    private final WarehouseRepository warehouseRepository;
+
+    private final ModelMapper modelMapper;
+
+    @Override
+    @PreAuthorize("hasAuthority('INVENTORY.WAREHOUSES')")
+    public PageResponse<AdminInventoryResponse> getInventories(AdminInventory_FilterRequest request) {
+        Sort.Direction direction = Sort.Direction.fromOptionalString(request.getSortType())
+                .orElse(Sort.Direction.ASC);
+        Sort sort = Sort.by(direction, "id");
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), sort);
+
+        Specification<Inventory> spec = AdminInventorySpecificationBuilder.build(request);
+
+        Page<Inventory> inventoryPage = inventoryRepository.findAll(spec, pageable);
+        List<Inventory> inventories = inventoryPage.getContent();
+        List<AdminInventoryResponse> response = inventories.stream()
+                .map(i -> modelMapper.map(i, AdminInventoryResponse.class))
+                .toList();
+
+        return PageResponse.<AdminInventoryResponse>builder()
+                .result(response)
+                .total(inventoryPage.getTotalElements())
+                .totalPages(inventoryPage.getTotalPages())
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("""
+        hasAnyAuthority(
+            'SALES.ORDERS',
+            'INVENTORY.WAREHOUSES',
+            'INVENTORY.SUPPLIERS'
+        )
+    """)
+    public PageResponse<AdminInventoryResponse> getInventories(
+        AdminInventory_FilterRequest request,
+        Long warehouseId
+    ) {
+        Sort.Direction direction = Sort.Direction.fromOptionalString(request.getSortType())
+                .orElse(Sort.Direction.ASC);
+        Sort sort = Sort.by(direction, "id");
+        Pageable pageable = PageRequest.of(request.getPage(), request.getSize(), sort);
+
+        Specification<Inventory> spec = AdminInventorySpecificationBuilder.buildWithWarehouseId(request, warehouseId);
+
+        Page<Inventory> inventoryPage = inventoryRepository.findAll(spec, pageable);
+        List<Inventory> inventories = inventoryPage.getContent();
+        List<AdminInventoryResponse> response = inventories.stream()
+                .map(i -> modelMapper.map(i, AdminInventoryResponse.class))
+                .toList();
+
+        return PageResponse.<AdminInventoryResponse>builder()
+                .result(response)
+                .total(inventoryPage.getTotalElements())
+                .totalPages(inventoryPage.getTotalPages())
+                .build();
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('INVENTORY.WAREHOUSES')")
+    public AdminInventoryResponse getInventoryById(Long id) {
+        Inventory inventory = inventoryRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.INVENTORY_NOT_FOUND));
+        return modelMapper.map(inventory, AdminInventoryResponse.class);
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('INVENTORY.WAREHOUSES')")
+    public void createInventory(AdminInventoryRequest request, Long warehouseId) {
+        ProductVariant productVariant = productVariantRepository.findById(request.getProductVariantId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND));
+        Warehouse warehouse = warehouseRepository.findById(warehouseId).orElseThrow(() -> new AppException(ErrorCode.WAREHOUSE_NOT_FOUND));
+        Inventory inventory = Inventory.builder()
+                .productVariant(productVariant)
+                .warehouse(warehouse)
+                .createdAt(LocalDateTime.now())
+                .quantity(0L)
+                .build();
+
+        try {
+            inventoryRepository.save(inventory);
+        } catch (DataIntegrityViolationException e) {
+            if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+                throw new AppException(ErrorCode.INVENTORY_ALREADY_EXISTS);
+            }
+        }
+    }
+
+    @Override
+    @PreAuthorize("hasAuthority('INVENTORY.WAREHOUSES')")
+    public void updateInventory(AdminInventoryRequest request, Long id) {
+//        Inventory inventory = inventoryRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.INVENTORY_NOT_FOUND));
+//        ProductVariant productVariant = productVariantRepository.findById(request.getProductVariantId()).orElseThrow(() -> new AppException(ErrorCode.PRODUCT_VARIANT_NOT_FOUND));
+//        try {
+//            inventory.setProductVariant(productVariant);
+//            inventoryRepository.save(inventory);
+//        } catch (DataIntegrityViolationException e) {
+//            if (e.getCause() instanceof org.hibernate.exception.ConstraintViolationException) {
+//                throw new AppException(ErrorCode.INVENTORY_ALREADY_EXISTS);
+//            }
+//        }
+    }
+
+    @Override
+    @Transactional
+    @PreAuthorize("hasAuthority('INVENTORY.WAREHOUSES')")
+    public void deleteInventory(Long id) {
+        Inventory inventory = inventoryRepository.findById(id).orElseThrow(() -> new AppException(ErrorCode.INVENTORY_NOT_FOUND));
+        ProductVariant pv = inventory.getProductVariant();
+        Long delta = inventory.getQuantity();
+        inventoryRepository.delete(inventory);
+
+        int updated = productVariantRepository.safeIncreaseStock(pv.getId(), -delta);
+        if(updated == 0){
+            throw new AppException(ErrorCode.INVENTORY_QUANTITY_CANNOT_BE_NEGATIVE);
+        }
+    }
+}

@@ -1,0 +1,44 @@
+package com.sellphones.entity.promotion;
+
+import com.sellphones.entity.BaseEntity;
+import com.sellphones.entity.product.ProductVariant;
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+@EqualsAndHashCode(callSuper = true)
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+@Entity
+@SuperBuilder
+@Table(name = "gift_product")
+public class GiftProduct extends BaseEntity<Long> {
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
+    private Long stock;
+
+    @Column(nullable = false, columnDefinition = "TEXT")
+    private String description;
+
+    private String thumbnail;
+
+    @Column(precision = 19, scale = 0)
+    private BigDecimal price;
+
+    @ManyToMany
+    @JoinTable(name = "product_variant_gift",
+            joinColumns = @JoinColumn(name = "gift_product_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_variant_id")
+    )
+    private List<ProductVariant> productVariants;
+}

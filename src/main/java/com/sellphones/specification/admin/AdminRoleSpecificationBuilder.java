@@ -1,0 +1,29 @@
+package com.sellphones.specification.admin;
+import com.sellphones.dto.user.admin.AdminRole_FilterRequest;
+import com.sellphones.entity.user.Role;
+import com.sellphones.entity.user.RoleName;
+import org.springframework.data.jpa.domain.Specification;
+
+public class AdminRoleSpecificationBuilder {
+    public static Specification<Role> build(AdminRole_FilterRequest request){
+        Specification<Role> spec = (root, query, cb) -> cb.conjunction();
+
+        if(request.getName() != null){
+            spec = spec.and(hasNameContain(request.getName()));
+        }
+
+//        if(request.getRoleName() != null){
+//            spec = spec.and(hasRoleName(request.getRoleName()));
+//        }
+
+        return spec;
+    }
+
+    public static Specification<Role> hasNameContain(String name){
+        return (root, query, cb) -> cb.like(cb.lower(root.get("name")), "%" + name.toLowerCase() + "%");
+    }
+
+    public static Specification<Role> hasRoleName(RoleName roleName){
+        return (root, query, cb) -> cb.equal(root.get("roleName"), roleName);
+    }
+}
