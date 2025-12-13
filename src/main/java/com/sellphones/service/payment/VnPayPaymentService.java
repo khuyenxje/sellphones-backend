@@ -87,8 +87,8 @@ public class VnPayPaymentService implements VnPayService{
         String hashedQuery = hashByHMACSha512(query);
 
         Map<String, String> result = new HashMap<>();
-//        result.put("url", vnPayConfiguration.getUrl() + "?" + query + "&vnp_SecureHash=" + hashedQuery);
-        result.put("url",  baseUrl+ "/v1/payment/vnpay-callback?" + query);
+        result.put("url", vnPayConfiguration.getUrl() + "?" + query + "&vnp_SecureHash=" + hashedQuery);
+//        result.put("url",  baseUrl+ "/v1/payment/vnpay-callback?" + query);
         return result;
     }
 
@@ -97,9 +97,9 @@ public class VnPayPaymentService implements VnPayService{
         Map<String, Object> params = extractParams(request);
         String query = buildQuery(params);
         String hashedStr = hashByHMACSha512(query);
-//        if(!hashedStr.equalsIgnoreCase(request.getParameter("vnp_SecureHash"))){
-//            throw new AppException(ErrorCode.INVALID_VNPAY_SIGNATURE);
-//        }
+        if(!hashedStr.equalsIgnoreCase(request.getParameter("vnp_SecureHash"))){
+            throw new AppException(ErrorCode.INVALID_VNPAY_SIGNATURE);
+        }
 
         Payment payment = paymentRepository.findByTxnRef(request.getParameter("vnp_TxnRef")).orElseThrow(() -> new AppException(ErrorCode.PAYMENT_NOT_FOUND));
         if(payment.getStatus() == PaymentStatus.COMPLETED){
