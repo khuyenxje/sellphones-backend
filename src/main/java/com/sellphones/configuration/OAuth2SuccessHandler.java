@@ -15,7 +15,9 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -34,10 +36,11 @@ import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
+@Setter
+@ConfigurationProperties(prefix = "spring.frontend")
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    @Value("${frontend.url}")
-    private final String baseRedirectUrl;
+    private String url;
 
     private final AuthenticationService authenticationService;
 
@@ -97,7 +100,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             response.setContentType("application/json;charset=UTF-8");
             response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-            response.sendRedirect(baseRedirectUrl);
+            response.sendRedirect(url);
         }else{
             String familyName = (String) attributes.get("family_name");
             String givenName = (String) attributes.get("given_name");
@@ -116,7 +119,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             String encodedEmail = URLEncoder.encode(email, StandardCharsets.UTF_8);
             String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
             redisAuthService.saveRegisterEmail(activeToken, email, Duration.ofMinutes(10));
-            response.sendRedirect(baseRedirectUrl+"n/oauth2/complete-register?email="
+            response.sendRedirect(url+"/oauth2/complete-register?email="
                     + encodedEmail + "&activeToken=" + activeToken + "&name=" + encodedName);
         }
     }

@@ -14,7 +14,9 @@ import com.sellphones.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
@@ -31,6 +33,8 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Setter
+@ConfigurationProperties(prefix = "spring.backend")
 public class VnPayPaymentService implements VnPayService{
 
     private final PaymentMethodRepository paymentMethodRepository;
@@ -40,9 +44,6 @@ public class VnPayPaymentService implements VnPayService{
     private final PaymentRepository paymentRepository;
 
     private final VnPayConfiguration vnPayConfiguration;
-
-    @Value("${app.base-url}")
-    private String baseUrl;
 
     @Override
     public PaymentMethodRepository getPaymentMethodRepository() {
