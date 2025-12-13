@@ -12,7 +12,7 @@ spring:
     ssl: true
 
   mail:
-    host: "smtp.gmail.com"
+    host: smtp.gmail.com
     port: 587
     username: ${MAIL_USERNAME}
     password: ${MAIL_PASSWORD}
@@ -25,6 +25,7 @@ spring:
             required: true
           ssl:
             trust: smtp.gmail.com
+        debug: true
   frontend:
     url: ${FRONTEND_URL:http://localhost:3000}
   backend:
