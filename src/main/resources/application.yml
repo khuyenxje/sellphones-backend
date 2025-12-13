@@ -10,7 +10,12 @@ spring:
     username : ${REDIS_USERNAME}
     password: ${REDIS_PASSWORD}
     ssl: true
-
+  elastic:
+    scheme: ${ELASTIC_SCHEME:https}
+    host: ${ELASTIC_HOST}
+    port: ${ELASTIC_PORT:443}
+    username: ${ELASTIC_USERNAME}
+    password: ${ELASTIC_PASSWORD}
   mail:
     host: smtp.gmail.com
     port: 587
