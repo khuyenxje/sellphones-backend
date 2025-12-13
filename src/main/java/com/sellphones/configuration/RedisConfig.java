@@ -32,12 +32,15 @@ public class RedisConfig {
     private String host;
 
     private int port;
+
+    private String username;
     
     private String password;
 
     @Bean
     public RedisConnectionFactory redisConnectionFactory() {
         RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
+        config.setUsername(username);
         config.setPassword(RedisPassword.of(password));
 
         LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
