@@ -42,7 +42,6 @@ public class AppConstants {
             "/api/v1/admin/**",
     };
 
-    public final static String BASE_URL = "http://localhost:8080/";
 
     public final static String ADMIN_REFRESH_TOKEN_NAME = "adminRefreshToken";
 

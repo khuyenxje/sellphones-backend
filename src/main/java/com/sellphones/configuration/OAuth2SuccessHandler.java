@@ -15,6 +15,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
@@ -34,6 +35,9 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
+
+    @Value("${frontend.url}")
+    private final String baseRedirectUrl;
 
     private final AuthenticationService authenticationService;
 
@@ -93,7 +97,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             response.setContentType("application/json;charset=UTF-8");
             response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-            response.sendRedirect("http://localhost:3000");
+            response.sendRedirect(baseRedirectUrl);
         }else{
             String familyName = (String) attributes.get("family_name");
             String givenName = (String) attributes.get("given_name");
@@ -112,7 +116,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
             String encodedEmail = URLEncoder.encode(email, StandardCharsets.UTF_8);
             String encodedName = URLEncoder.encode(name, StandardCharsets.UTF_8);
             redisAuthService.saveRegisterEmail(activeToken, email, Duration.ofMinutes(10));
-            response.sendRedirect("http://localhost:3000/oauth2/complete-register?email="
+            response.sendRedirect(baseRedirectUrl+"n/oauth2/complete-register?email="
                     + encodedEmail + "&activeToken=" + activeToken + "&name=" + encodedName);
         }
     }

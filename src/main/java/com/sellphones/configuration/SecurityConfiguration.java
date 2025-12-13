@@ -5,6 +5,7 @@ import com.sellphones.filter.JwtValidatorFilter;
 import com.sellphones.oauth2.CustomOAuth2UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,6 +30,9 @@ public class SecurityConfiguration {
 
     private final CustomOAuth2UserService oAuth2UserService;
 
+    @Value("${frontend.url}")
+    private String allowedOrigin;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, JwtValidatorFilter jwtValidatorFilter, OAuth2SuccessHandler oAuth2SuccessHandler) throws Exception {
         http
@@ -46,7 +50,7 @@ public class SecurityConfiguration {
                             @Override
                             public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
                                 CorsConfiguration config = new CorsConfiguration();
-                                config.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
+                                config.setAllowedOrigins(Collections.singletonList(allowedOrigin));
                                 config.setAllowedMethods(Collections.singletonList("*"));
                                 config.setAllowCredentials(true);
                                 config.setAllowedHeaders(Collections.singletonList("*"));

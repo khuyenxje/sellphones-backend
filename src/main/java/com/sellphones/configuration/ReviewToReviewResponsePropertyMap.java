@@ -11,6 +11,12 @@ import java.util.List;
 
 public class ReviewToReviewResponsePropertyMap extends PropertyMap<Review, ReviewResponse> {
 
+    private final String baseUrl;
+
+    public ReviewToReviewResponsePropertyMap(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
+
     private final Converter<List<String>, List<String>> imageNamesToImageUrlsConverter = new Converter<List<String>, List<String>>() {
         @Override
         public List<String> convert(MappingContext<List<String>, List<String>> mappingContext) {
@@ -18,7 +24,7 @@ public class ReviewToReviewResponsePropertyMap extends PropertyMap<Review, Revie
                 return null;
             }
 
-            return mappingContext.getSource().stream().map(in -> AppConstants.BASE_URL + "uploads/reviews/" + in).toList();
+            return mappingContext.getSource().stream().map(in -> baseUrl + "/uploads/reviews/" + in).toList();
         }
     };
 

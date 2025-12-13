@@ -12,15 +12,13 @@ import com.sellphones.repository.payment.PaymentMethodRepository;
 import com.sellphones.repository.payment.PaymentRepository;
 import com.sellphones.utils.SecurityUtils;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-import java.io.IOException;
-import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -42,6 +40,9 @@ public class VnPayPaymentService implements VnPayService{
     private final PaymentRepository paymentRepository;
 
     private final VnPayConfiguration vnPayConfiguration;
+
+    @Value("${app.base-url}")
+    private String baseUrl;
 
     @Override
     public PaymentMethodRepository getPaymentMethodRepository() {
@@ -87,7 +88,7 @@ public class VnPayPaymentService implements VnPayService{
 
         Map<String, String> result = new HashMap<>();
 //        result.put("url", vnPayConfiguration.getUrl() + "?" + query + "&vnp_SecureHash=" + hashedQuery);
-        result.put("url", "http://localhost:8080/api/v1/payment/vnpay-callback?" + query);
+        result.put("url",  baseUrl+ "/v1/payment/vnpay-callback?" + query);
         return result;
     }
 
