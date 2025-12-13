@@ -13,6 +13,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.cache.RedisCacheConfiguration;
 import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
+import org.springframework.data.redis.connection.RedisPassword;
+import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
+import org.springframework.data.redis.connection.lettuce.LettuceClientConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
@@ -29,11 +32,19 @@ public class RedisConfig {
     private String host;
 
     private int port;
+    
+    private String password;
 
     @Bean
-    public RedisConnectionFactory redisConnectionFactory(){
-        System.out.println("redisConnectionFactory " + host);
-        return new LettuceConnectionFactory(host, port);
+    public RedisConnectionFactory redisConnectionFactory() {
+        RedisStandaloneConfiguration config = new RedisStandaloneConfiguration(host, port);
+        config.setPassword(RedisPassword.of(password));
+
+        LettuceClientConfiguration clientConfig = LettuceClientConfiguration.builder()
+                .useSsl()   // bật SSL
+                .build();
+
+        return new LettuceConnectionFactory(config, clientConfig);
     }
 
     @Bean
