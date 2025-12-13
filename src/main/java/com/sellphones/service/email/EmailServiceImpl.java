@@ -26,6 +26,7 @@ public class EmailServiceImpl implements EmailService{
     @Override
     @Async
     public void sandEmail(String subject, String content, String to) {
+        System.out.println("sandEmail " + to);
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
