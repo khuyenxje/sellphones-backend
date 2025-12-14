@@ -1,15 +1,42 @@
 spring:
-  jwt:
-    secret: ${JWT_SECRET}
-    access-expiration: ${JWT_ACCESS_EXPIRATION:900000}
-    refresh-expiration: ${JWT_REFRESH_EXPIRATION:1209600000}
+  application:
+    name: demo
 
+  main:
+    lazy-initialization: true
+  datasource:
+    url: ${DB_URL}
+    driver-class-name: org.postgresql.Driver
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+    hikari:
+      minimum-idle: 1
+      maximum-pool-size: 5
+      connection-timeout: 20000
+
+  jpa:
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        format_sql: false
+        temp:
+          use_jdbc_metadata_defaults: false
+    defer-datasource-initialization: false
+  servlet:
+    multipart:
+      max-file-size: 200MB
+      max-request-size: 500MB
   redis:
     host: ${REDIS_HOST}
     port: ${REDIS_PORT}
-    username : ${REDIS_USERNAME}
+    username: ${REDIS_USERNAME}
     password: ${REDIS_PASSWORD}
     ssl: true
+    timeout: 2000
   elastic:
     scheme: ${ELASTIC_SCHEME:https}
     host: ${ELASTIC_HOST}
@@ -30,33 +57,49 @@ spring:
             required: true
           ssl:
             trust: smtp.gmail.com
-        debug: true
-  frontend:
-    url: ${FRONTEND_URL:http://localhost:3000}
-  backend:
-    url: ${APP_BASE_URL:http://localhost:8080}
-  payment:
-    vnpay:
-      hashSecret: ${VNPAY_HASH_SECRET}
-      url: "https://sandbox.vnpayment.vn/paymentv2/vpcpay.html"
-      command: "pay"
-      currCode: "VND"
-      locale: "vn"
-      orderInfo: "Thanh toan don hang"
-      orderType: 110000
-      returnUrl: ${VNPAY_RETURN_URL}
-      tmnCode: ${VNPAY_TMN_CODE}
-      version: "2.1.0"
-      successRedirectUrl: ${VNPAY_SUCCESS_REDIRECT_URL}
-      failRedirectUrl: ${VNPAY_FAIL_REDIRECT_URL}
-
+        debug: false
   security:
     oauth2:
       client:
         registration:
           google:
-            clientId: ${GOOGLE_CLIENT_ID}
-            clientSecret: ${GOOGLE_CLIENT_SECRET}
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
             scope:
               - email
               - profile
+
+  h2:
+    console:
+      enabled: false
+
+jwt:
+  secret: ${JWT_SECRET}
+  access-expiration: ${JWT_ACCESS_EXPIRATION:900000}
+  refresh-expiration: ${JWT_REFRESH_EXPIRATION:1209600000}
+
+frontend:
+  url: ${FRONTEND_URL:http://localhost:3000}
+
+backend:
+  url: ${APP_BASE_URL:http://localhost:8080}
+payment:
+  vnpay:
+    hashSecret: ${VNPAY_HASH_SECRET}
+    url: https://sandbox.vnpayment.vn/paymentv2/vpcpay.html
+    command: pay
+    currCode: VND
+    locale: vn
+    orderInfo: Thanh toan don hang
+    orderType: 110000
+    returnUrl: ${VNPAY_RETURN_URL}
+    tmnCode: ${VNPAY_TMN_CODE}
+    version: "2.1.0"
+    successRedirectUrl: ${VNPAY_SUCCESS_REDIRECT_URL}
+    failRedirectUrl: ${VNPAY_FAIL_REDIRECT_URL}
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: WARN
+    org.hibernate.type: WARN
+    org.springframework.jdbc.datasource.init: WARN
