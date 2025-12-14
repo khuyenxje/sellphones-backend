@@ -32,7 +32,7 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 @Setter
-@ConfigurationProperties(prefix = "spring.jwt")
+@ConfigurationProperties(prefix = "jwt")
 public class JwtUtils {
 
     private final RedisAuthService redisAuthService;

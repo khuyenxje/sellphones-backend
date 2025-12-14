@@ -33,7 +33,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Setter
-@ConfigurationProperties(prefix = "spring.jwt")
+@ConfigurationProperties(prefix = "jwt")
 public class AuthenticationServiceImpl implements AuthenticationService{
 
     private final JwtUtils jwtUtils;

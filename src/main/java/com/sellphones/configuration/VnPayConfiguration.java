@@ -10,7 +10,7 @@ import java.util.Map;
 
 @Configuration
 @Setter
-@ConfigurationProperties(prefix = "spring.payment.vnpay")
+@ConfigurationProperties(prefix = "payment.vnpay")
 public class VnPayConfiguration {
 
     @Getter
