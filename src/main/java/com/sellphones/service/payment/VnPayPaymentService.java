@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 @Setter
-@ConfigurationProperties(prefix = "spring.backend")
+@ConfigurationProperties(prefix = "backend")
 public class VnPayPaymentService implements VnPayService{
 
     private final PaymentMethodRepository paymentMethodRepository;

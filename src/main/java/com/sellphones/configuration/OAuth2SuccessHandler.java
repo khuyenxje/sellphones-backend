@@ -37,7 +37,7 @@ import java.util.UUID;
 @Component
 @RequiredArgsConstructor
 @Setter
-@ConfigurationProperties(prefix = "spring.frontend")
+@ConfigurationProperties(prefix = "frontend")
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private String url;

@@ -9,7 +9,7 @@ import java.util.List;
 
 @Component
 @Setter
-@ConfigurationProperties(prefix = "spring.backend")
+@ConfigurationProperties(prefix = "backend")
 public class ImageNameToImageUrlConverter {
 
     private static String url;

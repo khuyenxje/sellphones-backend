@@ -29,7 +29,7 @@ import java.util.Collections;
 @RequiredArgsConstructor
 @EnableMethodSecurity(prePostEnabled = true)
 @Setter
-@ConfigurationProperties(prefix = "spring.frontend")
+@ConfigurationProperties(prefix = "frontend")
 public class SecurityConfiguration {
 
     private final CustomOAuth2UserService oAuth2UserService;
