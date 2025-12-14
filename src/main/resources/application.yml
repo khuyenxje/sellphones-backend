@@ -1,6 +1,10 @@
 spring:
   application:
     name: demo
+  data:
+    elasticsearch:
+      repositories:
+        enabled: false
 
   main:
     lazy-initialization: true
@@ -38,6 +42,7 @@ spring:
     ssl: true
     timeout: 2000
   elastic:
+    enabled: false
     scheme: ${ELASTIC_SCHEME:https}
     host: ${ELASTIC_HOST}
     port: ${ELASTIC_PORT:443}
